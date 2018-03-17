@@ -1,0 +1,69 @@
+---
+- name: mariadb repository present
+  yum_repository:
+    name: mariadb
+    description: MariaDB
+    baseurl: http://yum.mariadb.org/10.2/centos7-amd64
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: yes
+- name: latest mariadb packages version installed
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - MySQL-python
+    - MariaDB-server
+    - MariaDB-client
+  notify:
+    - restart mariadb
+  tags: update
+- name: /etc/my.cnf
+  template:
+    src: templates/my.cnf.j2
+    dest: /etc/my.cnf
+  notify:
+    - restart mariadb
+- name: mariadb service enabled
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+- name: mariadb root user password set
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    name: root
+    password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    host: "{{ item }}"
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+- name: anonymous mariadb server user removed
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    user: ""
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ ansible_hostname }}"
+    - localhost
+- name: mariadb test database removed
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    db: test
+    state: absent
+
+- name: insert firewalld rule
+  firewalld:
+    port: "{{ mysql_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: yes
+...
