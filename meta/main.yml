@@ -1,6 +1,6 @@
 galaxy_info:
   author: krahb
-  description: Ansible bt rhel role
+  description: Ansible bt mariadb role
   company:
 
   license: MIT
