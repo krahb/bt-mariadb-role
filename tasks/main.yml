@@ -42,6 +42,9 @@
     - 127.0.0.1
     - ::1
     - localhost
+- name: debug
+  debug:
+    var: groups['all']
 - name: anonymous mariadb server user removed
   mysql_user:
     login_user: root
