@@ -1,0 +1,15 @@
+KEEP=2
+mysqldump --all-databases -u root | gzip -c > all-databases.$(date +%j).dump.sql.gz
+if [ $(date +%d) = "01" ]
+then
+ mv all-databases.$(date +%j).dump.sql.gz month-databases.$(date +%j).dump.sql.gz
+ find month-databases* -type f -mtime +$((30*KEEP)) -exec rm {} \;
+else
+ if [ $(date +%a) = "Sun" ]
+ then
+  mv all-databases.$(date +%j).dump.sql.gz week-databases.$(date +%j).dump.sql.gz
+  find week-databases* -type f -mtime +$((7*KEEP)) -exec rm {} \;
+ else
+  find all-databases* -type f -mtime +$KEEP -exec rm {} \;
+ fi
+fi
