@@ -8,12 +8,8 @@
     gpgcheck: yes
 - name: latest mariadb packages version installed
   yum:
-    name: "{{ item }}"
+    name: "{{ mysql_packages }}"
     state: latest
-  with_items:
-    - MySQL-python
-    - MariaDB-server
-    - MariaDB-client
   notify:
     - restart mariadb
   tags: update
