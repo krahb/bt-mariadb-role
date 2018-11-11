@@ -6,3 +6,4 @@ mysql_packages:
 - MySQL-python
 - MariaDB-server
 - MariaDB-client
+client_ip_addresses: []
