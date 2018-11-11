@@ -24,10 +24,14 @@
     name: mariadb
     state: started
     enabled: yes
+#- name: show
+#  debug:
+#    msg: "{{ item }} : {{ hostvars[item].ansible_default_ipv4.address }}"
+#  with_items: "{{ groups['all'] }}"
 - name: get ip addresses
   set_fact:
     client_ip_addresses: "{{ client_ip_addresses }} {{ hostvars[item].ansible_default_ipv4.address }}"
-    with_items: "{{ groups['all'] }}"
+  with_items: "{{ groups['all'] }}"
 - name: mariadb root user password set
   mysql_user:
     login_user: root
