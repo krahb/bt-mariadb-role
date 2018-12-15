@@ -6,3 +6,6 @@ mysql_packages:
 - MySQL-python
 - MariaDB-server
 - MariaDB-client
+mysql_directories:
+- /var/log/mariadb
+- /var/run/mariadb
