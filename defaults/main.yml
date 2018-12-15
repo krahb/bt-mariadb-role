@@ -9,3 +9,4 @@ mysql_packages:
 mysql_directories:
 - /var/log/mariadb
 - /var/run/mariadb
+client_ip_addresses: []
