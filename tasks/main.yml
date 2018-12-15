@@ -5,7 +5,7 @@
     state: directory
     owner: mysql
     group: mysql
-  with_item: "{{ mysql_directories }}"
+  with_items: "{{ mysql_directories }}"
 - name: mariadb repository present
   yum_repository:
     name: mariadb
