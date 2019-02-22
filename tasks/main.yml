@@ -1,11 +1,4 @@
 ---
-- name: directories created
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: mysql
-    group: mysql
-  with_items: "{{ mysql_directories }}"
 - name: mariadb repository present
   yum_repository:
     name: mariadb
@@ -20,6 +13,13 @@
   notify:
     - restart mariadb
   tags: update
+- name: directories created
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: mysql
+    group: mysql
+  with_items: "{{ mysql_directories }}"
 - name: /etc/my.cnf
   template:
     src: templates/my.cnf.j2
