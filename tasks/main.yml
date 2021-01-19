@@ -1,17 +1,17 @@
 ---
-- name: mariadb repository present
-  yum_repository:
-    name: mariadb
-    description: MariaDB
-    baseurl: "http://yum.mariadb.org/{{ mysql_version }}/centos7-amd64"
-    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-    gpgcheck: yes
+#- name: mariadb repository present
+#  yum_repository:
+#    name: mariadb
+#    description: MariaDB
+#    baseurl: "http://yum.mariadb.org/{{ mysql_version }}/centos7-amd64"
+#    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+#    gpgcheck: yes
 - name: latest mariadb packages version installed
   yum:
     name: "{{ mysql_packages }}"
     state: latest
   notify:
-    - restart mariadb
+    - restart mysqld
   tags: update
 - name: directories created
   file:
@@ -25,10 +25,10 @@
     src: templates/my.cnf.j2
     dest: /etc/my.cnf
   notify:
-    - restart mariadb
-- name: mariadb service enabled
+    - restart mysqld
+- name: mysqld service enabled
   service:
-    name: mariadb
+    name: mysqld
     state: started
     enabled: yes
 #- name: show
@@ -38,7 +38,7 @@
 - name: get ip addresses
   set_fact:
     client_ip_addresses: "{{ client_ip_addresses }} + [ '{{ hostvars[item].ansible_default_ipv4.address }}' ]"
-  with_items: "{{ groups['all'] }}"
+  with_items: "{{ groups['wp'] }}"
 - name: mariadb root user password set
   mysql_user:
     login_user: root
@@ -48,6 +48,7 @@
     password: "{{ mysql_root_password }}"
     priv: "*.*:ALL,GRANT"
     host: "{{ item }}"
+  no_log: True
   with_items:
     - "{{ client_ip_addresses }}"
     - 127.0.0.1
@@ -61,6 +62,7 @@
     user: ""
     host: "{{ item }}"
     state: absent
+  no_log: True
   with_items:
     - "{{ ansible_hostname }}"
     - localhost
